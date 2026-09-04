@@ -1,6 +1,5 @@
-name: C/C++ CI
+name: CMake C/C++ CI
 
-# Déclenche le script à chaque push ou pull request sur la branche principale
 on:
   push:
     branches: [ "main", "master" ]
@@ -9,25 +8,27 @@ on:
 
 jobs:
   build:
-    # Utilise la dernière version d'Ubuntu (Linux) fournie par GitHub
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Copie les fichiers de votre dépôt sur le serveur de GitHub
+    # 1. Récupère le code du dépôt
     - name: Récupérer le code
       uses: actions/checkout@v4
 
-    # 2. Installe le compilateur GCC et l'outil Make
-    - name: Installer le compilateur (GCC)
+    # 2. Installe CMake et le compilateur GCC
+    - name: Installer CMake et GCC
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential
+        sudo apt-get install -y build-essential cmake
 
-    # 3. Compile le projet (Adaptez cette ligne selon votre projet)
+    # 3. Configure le projet (génère les Makefiles dans le dossier 'build')
+    - name: Configurer CMake
+      run: cmake -B build -S .
+
+    # 4. Compile le projet
     - name: Compiler le projet
-      run: |
-        gcc main.c -o mon_programme
-        
-    # 4. Optionnel : Exécute le programme pour vérifier qu'il ne crashe pas
-    - name: Lancer le programme
-      run: ./mon_programme
+      run: cmake --build build
+
+    # 5. Optionnel : Lance les tests si vous utilisez CTest
+    # - name: Exécuter les tests
+    #   run: cd build && ctest --output-on-failure
