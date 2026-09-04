@@ -1,1 +1,33 @@
+name: C/C++ CI
 
+# Déclenche le script à chaque push ou pull request sur la branche principale
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build:
+    # Utilise la dernière version d'Ubuntu (Linux) fournie par GitHub
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Copie les fichiers de votre dépôt sur le serveur de GitHub
+    - name: Récupérer le code
+      uses: actions/checkout@v4
+
+    # 2. Installe le compilateur GCC et l'outil Make
+    - name: Installer le compilateur (GCC)
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential
+
+    # 3. Compile le projet (Adaptez cette ligne selon votre projet)
+    - name: Compiler le projet
+      run: |
+        gcc main.c -o mon_programme
+        
+    # 4. Optionnel : Exécute le programme pour vérifier qu'il ne crashe pas
+    - name: Lancer le programme
+      run: ./mon_programme
